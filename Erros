@@ -81,3 +81,21 @@ See https://discourse.ubuntu.com/t/ubuntu-24-04-lts-noble-numbat-release-notes/3
 
 Summary: There was 1 ERROR message, returning a non-zero exit code.
 
+
+
+
+osb@osb-VirtualBox:~/yocto-rpi/poky/build$ bitbake core-image-base
+Loading cache: 100% |                                                                                                                                                   | ETA:  --:--:--
+Loaded 0 entries from dependency cache.
+Parsing recipes: 100% |##################################################################################################################################################| Time: 0:01:39
+Parsing of 2538 .bb files complete (0 cached, 2538 parsed). 3936 targets, 147 skipped, 0 masked, 0 errors.
+NOTE: Resolving any missing task queue dependencies
+ERROR: Nothing RPROVIDES 'wireless-tools' (but /home/osb/yocto-rpi/poky/meta/recipes-core/images/core-image-base.bb RDEPENDS on or otherwise requires it)
+NOTE: Runtime target 'wireless-tools' is unbuildable, removing...
+Missing or unbuildable dependency chain was: ['wireless-tools']
+ERROR: Required build target 'core-image-base' has no buildable providers.
+Missing or unbuildable dependency chain was: ['core-image-base', 'wireless-tools']
+
+Summary: There were 2 ERROR messages, returning a non-zero exit code.
+osb@osb-VirtualBox:~/yocto-rpi/poky/build$ 
+
