@@ -10,3 +10,22 @@ Reading state information... Done
 E: Unable to locate package libegl1-mesa
 E: Unable to locate package pylint3
 osb@osb-VirtualBox:~$ ^C
+
+
+osb@osb-VirtualBox:~/yocto-rpi$ bitbake-layers add-layer ../meta-openembedded/meta-oe
+bitbake-layers add-layer ../meta-openembedded/meta-python
+bitbake-layers add-layer ../meta-openembedded/meta-multimedia
+bitbake-layers add-layer ../meta-openembedded/meta-networking
+bitbake-layers add-layer ../meta-raspberrypi
+NOTE: Starting bitbake server...
+Specified layer directory /home/osb/meta-openembedded/meta-oe doesn't exist
+NOTE: Starting bitbake server...
+Specified layer directory /home/osb/meta-openembedded/meta-python doesn't exist
+NOTE: Starting bitbake server...
+Specified layer directory /home/osb/meta-openembedded/meta-multimedia doesn't exist
+NOTE: Starting bitbake server...
+Specified layer directory /home/osb/meta-openembedded/meta-networking doesn't exist
+NOTE: Starting bitbake server...
+Specified layer directory /home/osb/meta-raspberrypi doesn't exist
+osb@osb-VirtualBox:~/yocto-rpi$ 
+
