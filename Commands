@@ -243,3 +243,97 @@ bitbake core-image-minimal
 This removes networking complexity and builds a basic bootable image. You can add SSH and networking later.
 
 Try the updated `local.conf` configuration above and run the build again. Let me know if you encounter other missing packages!
+
+
+
+
+--------------------------------------
+The `dhcp-client` package name is also incorrect. Let's fix the configuration with the correct package names:
+
+## Update local.conf with Correct Package Names:
+
+```bash
+nano conf/local.conf
+```
+
+Replace the networking section with this corrected version:
+
+```bash
+# Machine configuration
+MACHINE = "raspberrypi5"
+DISTRO = "poky"
+ENABLE_UART = "1"
+GPU_MEM = "128"
+
+# Enable SSH server
+IMAGE_FEATURES += "ssh-server-openssh"
+
+# Enable WiFi and networking (corrected package names)
+IMAGE_INSTALL:append = " linux-firmware-rpidistro-bcm43455"
+IMAGE_INSTALL:append = " wpa-supplicant"
+IMAGE_INSTALL:append = " iw"
+IMAGE_INSTALL:append = " dhcpcd"
+IMAGE_INSTALL:append = " openssh"
+
+# Enable SSH service at boot
+SYSTEMD_AUTO_ENABLE:pn-openssh = "enable"
+
+# Set root password for SSH access
+EXTRA_IMAGE_FEATURES += "debug-tweaks"
+```
+
+## Alternative Minimal Configuration (If Still Issues):
+
+```bash
+# Machine configuration
+MACHINE = "raspberrypi5"
+DISTRO = "poky"
+ENABLE_UART = "1"
+GPU_MEM = "128"
+
+# Enable SSH server
+IMAGE_FEATURES += "ssh-server-openssh"
+
+# Minimal networking - just WiFi firmware and SSH
+IMAGE_INSTALL:append = " linux-firmware-rpidistro-bcm43455"
+IMAGE_INSTALL:append = " wpa-supplicant"
+
+# Enable SSH service at boot
+SYSTEMD_AUTO_ENABLE:pn-openssh = "enable"
+
+# Set root password for SSH access
+EXTRA_IMAGE_FEATURES += "debug-tweaks"
+```
+
+## Check Available DHCP Packages:
+```bash
+bitbake-layers show-recipes | grep -i dhcp
+```
+
+## Clean and Build:
+```bash
+bitbake -c clean core-image-base
+bitbake core-image-base
+```
+
+## If Still Having Package Issues, Try Core-Image-Minimal:
+```bash
+# Edit local.conf to just basic Pi 5 config
+nano conf/local.conf
+```
+
+Minimal config:
+```bash
+MACHINE = "raspberrypi5"
+DISTRO = "poky"
+ENABLE_UART = "1"
+IMAGE_FEATURES += "ssh-server-openssh"
+EXTRA_IMAGE_FEATURES += "debug-tweaks"
+```
+
+Then build:
+```bash
+bitbake core-image-minimal
+```
+
+The corrected package name `dhcpcd` should resolve the issue. Try the first updated configuration and let me know if there are any other missing packages!
