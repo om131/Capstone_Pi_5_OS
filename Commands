@@ -149,3 +149,97 @@ echo 'kernel.apparmor_restrict_unprivileged_userns=0' | sudo tee -a /etc/sysctl.
 
 # Apply changes
 sudo sysctl -p
+
+
+
+
+
+
+The error indicates that `wireless-tools` package isn't available in the current layer configuration. Let's fix this:
+
+## Solution 1: Replace wireless-tools with iw (Recommended)
+Edit `conf/local.conf` and replace the wireless-tools line:
+
+```bash
+nano conf/local.conf
+```
+
+Change this line:
+```bash
+IMAGE_INSTALL:append = " wireless-tools"
+```
+
+To:
+```bash
+IMAGE_INSTALL:append = " iw wireless-regdb"
+```
+
+## Solution 2: Complete Updated local.conf
+Replace the networking section in your `conf/local.conf` with this:
+
+```bash
+# Machine configuration
+MACHINE = "raspberrypi5"
+DISTRO = "poky"
+ENABLE_UART = "1"
+GPU_MEM = "128"
+
+# Enable SSH server
+IMAGE_FEATURES += "ssh-server-openssh"
+
+# Enable WiFi and networking (updated packages)
+IMAGE_INSTALL:append = " linux-firmware-rpidistro-bcm43455"
+IMAGE_INSTALL:append = " wpa-supplicant"
+IMAGE_INSTALL:append = " iw"
+IMAGE_INSTALL:append = " wireless-regdb"
+IMAGE_INSTALL:append = " dhcp-client"
+
+# Enable SSH service at boot
+SYSTEMD_AUTO_ENABLE:pn-openssh = "enable"
+
+# Set root password for SSH access
+EXTRA_IMAGE_FEATURES += "debug-tweaks"
+
+# Add basic networking
+IMAGE_INSTALL:append = " openssh"
+```
+
+## Solution 3: Verify Layer Dependencies
+Check if all required layers are added:
+```bash
+bitbake-layers show-layers
+```
+
+You should see:
+- meta
+- meta-poky
+- meta-yocto-bsp
+- meta-oe
+- meta-python
+- meta-multimedia
+- meta-networking
+- meta-raspberrypi
+
+## If meta-networking is missing:
+```bash
+bitbake-layers add-layer ../meta-openembedded/meta-networking
+```
+
+## Clean and Retry Build:
+```bash
+# Clean previous attempt
+bitbake -c clean core-image-base
+
+# Try building again
+bitbake core-image-base
+```
+
+## Alternative: Try Minimal Build First
+If still having issues, try the minimal image:
+```bash
+bitbake core-image-minimal
+```
+
+This removes networking complexity and builds a basic bootable image. You can add SSH and networking later.
+
+Try the updated `local.conf` configuration above and run the build again. Let me know if you encounter other missing packages!
