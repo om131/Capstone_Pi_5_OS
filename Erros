@@ -33,6 +33,24 @@ osb@osb-VirtualBox:~/yocto-rpi$
 
 
 
+
+osb@osb-VirtualBox:~/yocto-rpi/poky/build$ bitbake -c clean core-image-base
+Loading cache: 100% |                                                                                                                                                   | ETA:  --:--:--
+Loaded 0 entries from dependency cache.
+Parsing recipes: 100% |##################################################################################################################################################| Time: 0:01:36
+Parsing of 2538 .bb files complete (0 cached, 2538 parsed). 3936 targets, 147 skipped, 0 masked, 0 errors.
+NOTE: Resolving any missing task queue dependencies
+ERROR: Nothing RPROVIDES 'dhcp-client' (but /home/osb/yocto-rpi/poky/meta/recipes-core/images/core-image-base.bb RDEPENDS on or otherwise requires it)
+NOTE: Runtime target 'dhcp-client' is unbuildable, removing...
+Missing or unbuildable dependency chain was: ['dhcp-client']
+ERROR: Required build target 'core-image-base' has no buildable providers.
+Missing or unbuildable dependency chain was: ['core-image-base', 'dhcp-client']
+
+
+
+
+
+
 osb@osb-VirtualBox:~/yocto-rpi/meta-openembedded$ cd ~/yocto-rpi/poky && source oe-init-build-env
 You had no conf/local.conf file. This configuration file has therefore been
 created for you from /home/osb/yocto-rpi/poky/meta-poky/conf/local.conf.sample
