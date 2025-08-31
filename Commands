@@ -20,9 +20,9 @@ sudo apt install gawk wget git diffstat unzip texinfo gcc build-essential chrpat
 10. Clone meta-raspberrypi layer: `git clone git://git.yoctoproject.org/meta-raspberrypi`
 11. Clone meta-openembedded: `git clone git://git.openembedded.org/meta-openembedded`
 12. Switch to stable branch (scarthgap for latest):
-    - `cd poky && git checkout scarthgap`
-    - `cd ../meta-raspberrypi && git checkout scarthgap`
-    - `cd ../meta-openembedded && git checkout scarthgap`
+        cd poky && git checkout kirkstone
+        cd ../meta-raspberrypi && git checkout kirkstone  
+        cd ../meta-openembedded && git checkout kirkstone
 
 ## Build Environment Configuration
 13. Source build environment: `cd ~/yocto-rpi/poky && source oe-init-build-env`
