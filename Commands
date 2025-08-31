@@ -1,1 +1,61 @@
 #Add commands
+Here's a step-by-step guide to build a custom OS for Raspberry Pi 5 using Yocto on Ubuntu:
+
+## Prerequisites Setup
+1. Install Ubuntu 20.04 or 22.04 LTS
+2. Update system: `sudo apt update && sudo apt upgrade`
+3. Install required packages:
+```bash
+sudo apt install gawk wget git diffstat unzip texinfo gcc build-essential chrpath socat cpio python3 python3-pip python3-pexpect xz-utils debianutils iputils-ping python3-git python3-jinja2 libegl1-mesa libsdl1.2-dev pylint3 xterm python3-subunit mesa-common-dev zstd liblz4-tool
+```
+
+## Yocto Project Setup
+4. Create working directory: `mkdir ~/yocto-rpi && cd ~/yocto-rpi`
+5. Clone Poky (Yocto reference distribution): `git clone git://git.yoctoproject.org/poky`
+6. Clone meta-raspberrypi layer: `git clone git://git.yoctoproject.org/meta-raspberrypi`
+7. Clone meta-openembedded: `git clone git://git.openembedded.org/meta-openembedded`
+8. Switch to stable branch (e.g., kirkstone): 
+   - `cd poky && git checkout kirkstone`
+   - `cd ../meta-raspberrypi && git checkout kirkstone`
+   - `cd ../meta-openembedded && git checkout kirkstone`
+
+## Build Environment Configuration
+9. Source build environment: `cd ~/yocto-rpi/poky && source oe-init-build-env`
+10. Add layers to bblayers.conf:
+```bash
+bitbake-layers add-layer ../meta-openembedded/meta-oe
+bitbake-layers add-layer ../meta-openembedded/meta-python
+bitbake-layers add-layer ../meta-openembedded/meta-multimedia
+bitbake-layers add-layer ../meta-raspberrypi
+```
+
+## Machine Configuration
+11. Edit `conf/local.conf`:
+    - Set `MACHINE = "raspberrypi5"`
+    - Set `DISTRO = "poky"`
+    - Add `ENABLE_UART = "1"`
+    - Add `GPU_MEM = "128"`
+
+## Build Process
+12. Build minimal image: `bitbake core-image-minimal`
+13. Or build full image: `bitbake core-image-sato`
+14. Wait for build completion (1-4 hours depending on hardware)
+
+## Image Deployment
+15. Insert SD card (8GB minimum)
+16. Find SD card device: `lsblk`
+17. Flash image to SD card: 
+```bash
+sudo dd if=tmp/deploy/images/raspberrypi5/core-image-minimal-raspberrypi5.wic.bz2 of=/dev/sdX bs=4M status=progress
+```
+18. Sync and eject: `sync && sudo eject /dev/sdX`
+
+## Boot and Test
+19. Insert SD card into Raspberry Pi 5
+20. Connect HDMI, keyboard, and power
+21. Boot and verify custom OS loads
+
+## Optional Customization
+22. Create custom layer: `bitbake-layers create-layer ../meta-custom`
+23. Add custom recipes and configurations
+24. Rebuild with customizations: `bitbake core-image-minimal`
