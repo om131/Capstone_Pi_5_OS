@@ -136,3 +136,16 @@ bitbake-layers add-layer ~/yocto-rpi/meta-openembedded/meta-python
 bitbake-layers add-layer ~/yocto-rpi/meta-openembedded/meta-multimedia
 bitbake-layers add-layer ~/yocto-rpi/meta-openembedded/meta-networking
 bitbake-layers add-layer ~/yocto-rpi/meta-raspberrypi
+
+
+# Check current setting
+cat /proc/sys/kernel/apparmor_restrict_unprivileged_userns
+
+# Enable user namespaces temporarily
+sudo sysctl kernel.apparmor_restrict_unprivileged_userns=0
+
+# Make it permanent
+echo 'kernel.apparmor_restrict_unprivileged_userns=0' | sudo tee -a /etc/sysctl.conf
+
+# Apply changes
+sudo sysctl -p
