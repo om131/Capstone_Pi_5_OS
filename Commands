@@ -1,61 +1,128 @@
-#Add commands
-Here's a step-by-step guide to build a custom OS for Raspberry Pi 5 using Yocto on Ubuntu:
+Here's the updated step-by-step guide for Ubuntu 24.04:
 
 ## Prerequisites Setup
-1. Install Ubuntu 20.04 or 22.04 LTS
+1. Install Ubuntu 24.04 LTS ✓
 2. Update system: `sudo apt update && sudo apt upgrade`
 3. Install required packages:
 ```bash
-sudo apt install gawk wget git diffstat unzip texinfo gcc build-essential chrpath socat cpio python3 python3-pip python3-pexpect xz-utils debianutils iputils-ping python3-git python3-jinja2 libegl1-mesa libsdl1.2-dev pylint3 xterm python3-subunit mesa-common-dev zstd liblz4-tool
+sudo apt install gawk wget git diffstat unzip texinfo gcc build-essential chrpath socat cpio python3 python3-pip python3-pexpect xz-utils debianutils iputils-ping python3-git python3-jinja2 libegl1-mesa-dev libsdl1.2-dev pylint xterm python3-subunit mesa-common-dev zstd liblz4-tool
 ```
 
+## VM SD Card Support Check
+4. Check if SD card is detected: `lsblk` or `sudo fdisk -l`
+5. If not detected, enable USB passthrough in VirtualBox settings
+6. Alternative: Use USB card reader for better VM compatibility
+7. Verify write permissions: `ls -la /dev/sd*`
+
 ## Yocto Project Setup
-4. Create working directory: `mkdir ~/yocto-rpi && cd ~/yocto-rpi`
-5. Clone Poky (Yocto reference distribution): `git clone git://git.yoctoproject.org/poky`
-6. Clone meta-raspberrypi layer: `git clone git://git.yoctoproject.org/meta-raspberrypi`
-7. Clone meta-openembedded: `git clone git://git.openembedded.org/meta-openembedded`
-8. Switch to stable branch (e.g., kirkstone): 
-   - `cd poky && git checkout kirkstone`
-   - `cd ../meta-raspberrypi && git checkout kirkstone`
-   - `cd ../meta-openembedded && git checkout kirkstone`
+8. Create working directory: `mkdir ~/yocto-rpi && cd ~/yocto-rpi`
+9. Clone Poky (Yocto reference distribution): `git clone git://git.yoctoproject.org/poky`
+10. Clone meta-raspberrypi layer: `git clone git://git.yoctoproject.org/meta-raspberrypi`
+11. Clone meta-openembedded: `git clone git://git.openembedded.org/meta-openembedded`
+12. Switch to stable branch (scarthgap for latest):
+    - `cd poky && git checkout scarthgap`
+    - `cd ../meta-raspberrypi && git checkout scarthgap`
+    - `cd ../meta-openembedded && git checkout scarthgap`
 
 ## Build Environment Configuration
-9. Source build environment: `cd ~/yocto-rpi/poky && source oe-init-build-env`
-10. Add layers to bblayers.conf:
+13. Source build environment: `cd ~/yocto-rpi/poky && source oe-init-build-env`
+14. Add layers to bblayers.conf:
 ```bash
 bitbake-layers add-layer ../meta-openembedded/meta-oe
 bitbake-layers add-layer ../meta-openembedded/meta-python
 bitbake-layers add-layer ../meta-openembedded/meta-multimedia
+bitbake-layers add-layer ../meta-openembedded/meta-networking
 bitbake-layers add-layer ../meta-raspberrypi
 ```
 
-## Machine Configuration
-11. Edit `conf/local.conf`:
-    - Set `MACHINE = "raspberrypi5"`
-    - Set `DISTRO = "poky"`
-    - Add `ENABLE_UART = "1"`
-    - Add `GPU_MEM = "128"`
+## Machine Configuration for Headless Setup
+15. Edit `conf/local.conf`:
+```bash
+# Machine configuration
+MACHINE = "raspberrypi5"
+DISTRO = "poky"
+ENABLE_UART = "1"
+GPU_MEM = "128"
+
+# Enable SSH server
+IMAGE_FEATURES += "ssh-server-openssh"
+
+# Enable WiFi and networking
+IMAGE_INSTALL:append = " linux-firmware-rpidistro-bcm43455"
+IMAGE_INSTALL:append = " wpa-supplicant"
+IMAGE_INSTALL:append = " wireless-tools"
+IMAGE_INSTALL:append = " iw"
+IMAGE_INSTALL:append = " networkmanager"
+IMAGE_INSTALL:append = " dhcp-client"
+
+# Enable SSH service at boot
+SYSTEMD_AUTO_ENABLE:pn-openssh = "enable"
+
+# Set root password for SSH access
+EXTRA_IMAGE_FEATURES += "debug-tweaks"
+```
+
+## WiFi Pre-configuration
+16. Create WiFi config directory: `mkdir -p ~/yocto-rpi/wifi-config`
+17. Create `~/yocto-rpi/wifi-config/wpa_supplicant.conf`:
+```bash
+country=US
+ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+update_config=1
+
+network={
+    ssid="YourWiFiName"
+    psk="YourWiFiPassword"
+}
+```
 
 ## Build Process
-12. Build minimal image: `bitbake core-image-minimal`
-13. Or build full image: `bitbake core-image-sato`
-14. Wait for build completion (1-4 hours depending on hardware)
+18. Build base image with networking: `bitbake core-image-base`
+19. Wait for build completion (2-6 hours depending on VM resources)
+
+## SD Card Preparation in VM
+20. Insert SD card (8GB minimum)
+21. If SD card not detected in VM:
+    - Shutdown VM
+    - Insert SD card/USB reader
+    - Start VM and assign USB device in VirtualBox
+22. Identify SD card: `lsblk`
 
 ## Image Deployment
-15. Insert SD card (8GB minimum)
-16. Find SD card device: `lsblk`
-17. Flash image to SD card: 
+23. Unmount any mounted partitions: `sudo umount /dev/sdX*`
+24. Flash image to SD card:
 ```bash
-sudo dd if=tmp/deploy/images/raspberrypi5/core-image-minimal-raspberrypi5.wic.bz2 of=/dev/sdX bs=4M status=progress
+sudo dd if=tmp/deploy/images/raspberrypi5/core-image-base-raspberrypi5.wic.bz2 of=/dev/sdX bs=4M status=progress conv=fsync
 ```
-18. Sync and eject: `sync && sudo eject /dev/sdX`
+25. Wait for completion and sync: `sync`
 
-## Boot and Test
-19. Insert SD card into Raspberry Pi 5
-20. Connect HDMI, keyboard, and power
-21. Boot and verify custom OS loads
+## Post-Flash Configuration
+26. Mount boot partition: `sudo mkdir -p /mnt/boot && sudo mount /dev/sdX1 /mnt/boot`
+27. Copy WiFi config: `sudo cp ~/yocto-rpi/wifi-config/wpa_supplicant.conf /mnt/boot/`
+28. Enable SSH: `sudo touch /mnt/boot/ssh`
+29. Unmount: `sudo umount /mnt/boot`
+30. Eject SD card: `sudo eject /dev/sdX`
 
-## Optional Customization
-22. Create custom layer: `bitbake-layers create-layer ../meta-custom`
-23. Add custom recipes and configurations
-24. Rebuild with customizations: `bitbake core-image-minimal`
+## Boot and Connect
+31. Insert SD card into Raspberry Pi 5
+32. Power on Pi and wait 3-5 minutes for first boot
+33. Find Pi IP address:
+    - Check router DHCP clients
+    - Or scan network: `nmap -sn 192.168.1.0/24`
+    - Or use: `arp -a | grep -i "b8:27:eb\|dc:a6:32\|e4:5f:01"`
+
+## SSH Connection
+34. Connect via SSH: `ssh root@<PI_IP_ADDRESS>`
+35. Default login: root (no password with debug-tweaks enabled)
+
+## VM Performance Optimization
+36. Allocate 8GB+ RAM to VM
+37. Assign 4+ CPU cores to VM
+38. Use SSD storage for VM if possible
+39. Close unnecessary applications during build
+
+## Troubleshooting
+40. If build fails, clean and retry: `bitbake -c clean core-image-base && bitbake core-image-base`
+41. For SD card issues in VM, try using physical machine for flashing
+42. Check WiFi credentials are correct in wpa_supplicant.conf
+43. Verify Pi 5 has power supply adequate (5V 5A recommended)
