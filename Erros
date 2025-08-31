@@ -71,3 +71,13 @@ Other commonly useful commands are:
  - 'devtool' and 'recipetool' handle common recipe tasks
  - 'bitbake-layers' handles common layer tasks
  - 'oe-pkgdata-util' handles common target package tasks
+
+
+
+
+osb@osb-VirtualBox:~/yocto-rpi/poky/build$ bitbake core-image-base
+ERROR: User namespaces are not usable by BitBake, possibly due to AppArmor.
+See https://discourse.ubuntu.com/t/ubuntu-24-04-lts-noble-numbat-release-notes/39890#unprivileged-user-namespace-restrictions for more information.
+
+Summary: There was 1 ERROR message, returning a non-zero exit code.
+
