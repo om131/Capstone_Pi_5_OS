@@ -126,3 +126,13 @@ sudo dd if=tmp/deploy/images/raspberrypi5/core-image-base-raspberrypi5.wic.bz2 o
 41. For SD card issues in VM, try using physical machine for flashing
 42. Check WiFi credentials are correct in wpa_supplicant.conf
 43. Verify Pi 5 has power supply adequate (5V 5A recommended)
+
+
+
+
+
+bitbake-layers add-layer ~/yocto-rpi/meta-openembedded/meta-oe
+bitbake-layers add-layer ~/yocto-rpi/meta-openembedded/meta-python
+bitbake-layers add-layer ~/yocto-rpi/meta-openembedded/meta-multimedia
+bitbake-layers add-layer ~/yocto-rpi/meta-openembedded/meta-networking
+bitbake-layers add-layer ~/yocto-rpi/meta-raspberrypi
