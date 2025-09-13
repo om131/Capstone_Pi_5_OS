@@ -1,0 +1,108 @@
+#include <dbus/dbus.h>
+
+typedef struct
+{
+    DBusConnection *connection;
+    char *adapter_path;
+} BluetoothManager;
+
+BluetoothManager bluez_init()
+{
+    BluetoothManager *mang = malloc(sizeof(BluetoothManager));
+
+    DBusError error;
+
+    dbus_error_init(&error);
+
+    mang->connection = dbus_bus_get(DBUS_BUS_SYSTEM, &error);
+
+    if (dbus_error_is_set(error))
+    {
+        fprintf(stderr, "D-Bus error in Init phase: %s\n", error->message);
+        dbus_error_free(error);
+    }
+
+    if (!mang->connection)
+    {
+        fprintf(stderr, "D-Bus bus connection failed");
+    }
+
+    return mang;
+}
+
+void bluez_adapter_powered(BluetoothManager *Manager)
+{
+    DBusMessage msg;
+    dbus_bool_t powered = TRUE;
+    char *property = "Powered";
+
+    msg = dbus_message_new_method_call(
+        "org.bluez",                       // destination
+        Manager->adapter_path,             // object path
+        "org.freedesktop.DBus.Properties", // interface
+        "Get"                              // method
+    );
+    // Add parameters: interface name and property name
+    DBusMessageIter iter;
+    dbus_message_iter_init_append(msg, &iter);
+    dbus_message_iter_append_basic(&iter, DBUS_TYPE_STRING, &interface);
+    dbus_message_iter_append_basic(&iter, DBUS_TYPE_STRING, &property);
+
+    reply = dbus_connection_send_with_reply_and_block(Manager->connection, msg, -1, &error);
+    dbus_message_unref(msg);
+
+    if (!reply)
+    { // if Not powered ON then manually power ON.
+        printf("Powering on Bluetooth adapter...\n");
+
+        msg = dbus_message_new_method_call(
+            "org.bluez",                       // destination
+            Manager->adapter_path,             // object path
+            "org.freedesktop.DBus.Properties", // interface
+            "Set"                              // method
+        );
+        if (!msg)
+        {
+            fprintf(stderr, "Failed to create message\n");
+            return;
+        }
+        set_property(manager->connection,
+                     manager->adapter_path,
+                     "org.bluez.Adapter1",
+                     "Powered",
+                     DBUS_TYPE_BOOLEAN,
+                     &powered);
+    }
+    else
+    {
+        return TRUE;
+    }
+}
+
+bool bluez_enable_discoverable()
+{
+    DBusConnection connection_dbus;
+    DBusError error;
+
+    dbus_error_init(&error); // Init the Error system of Dbus
+
+    // Discoverey enable
+    DBusMessage *method_call = dbus_message_new_method_call(const char *destination,
+                                                            const char *path,
+                                                            const char *interface,
+                                                            StartDiscovery);
+}
+
+void Main(void)
+{
+    BluetoothManager *Manager;
+
+    Manager->adapter_path = strdup("/org/bluez/hci0");
+
+    Manager = bluez_init();
+
+    bluez_adapter_powered(Manager);
+
+    // Init the Bluetooth lib for scanning
+    bluez_enable_discoverable();
+}
