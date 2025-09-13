@@ -9,8 +9,10 @@ typedef struct
     char *adapter_path;
 } BluetoothManager;
 
-static void check_dbus_error(DBusError *error, const char *operation) {
-    if (dbus_error_is_set(error)) {
+static void check_dbus_error(DBusError *error, const char *operation)
+{
+    if (dbus_error_is_set(error))
+    {
         fprintf(stderr, "D-Bus error in %s: %s\n", operation, error->message);
         dbus_error_free(error);
         exit(1);
@@ -27,11 +29,7 @@ BluetoothManager bluez_init()
 
     mang->connection = dbus_bus_get(DBUS_BUS_SYSTEM, &error);
 
-    if (dbus_error_is_set(error))
-    {
-        fprintf(stderr, "D-Bus error in Init phase: %s\n", error->message);
-        dbus_error_free(error);
-    }
+    check_dbus_error(&error, "Connecting to system Bus");
 
     if (!mang->connection)
     {
@@ -89,7 +87,6 @@ bool bluez_adapter_powered(BluetoothManager *Manager)
         dbus_message_iter_close_container(&iter, &variant_iter);
         reply = dbus_connection_send_with_reply_and_block(Manager->connection, msg, -1, &error);
         check_dbus_error(&error, "setting property");
-
     }
     else
     {
@@ -125,5 +122,5 @@ void Main(void)
     }
 
     // Init the Bluetooth lib for scanning
-    //bluez_enable_discoverable();
+    // bluez_enable_discoverable();
 }
