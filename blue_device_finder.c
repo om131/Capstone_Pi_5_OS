@@ -46,12 +46,12 @@ bool bluez_adapter_powered(BluetoothManager *Manager)
     DBusError error;
     dbus_bool_t powered = TRUE;
     char *property = "Powered";
-    char *interface = "org.freedesktop.DBus.Properties";
+    char *interface = "org.bluez.Adapter1";
     dbus_error_init(&error);
 
     msg = dbus_message_new_method_call(
         "org.bluez",                       // destination
-        "/org/bluez/hci0",             // object path
+        "/org/bluez/hci0",                 // object path
         "org.freedesktop.DBus.Properties", // interface
         "Get"                              // method
     );
@@ -75,7 +75,7 @@ bool bluez_adapter_powered(BluetoothManager *Manager)
 
         msg = dbus_message_new_method_call(
             "org.bluez",                       // destination
-            "/org/bluez/hci0",             // object path
+            "/org/bluez/hci0",                 // object path
             "org.freedesktop.DBus.Properties", // interface
             "Set"                              // method
         );
@@ -99,7 +99,20 @@ bool bluez_adapter_powered(BluetoothManager *Manager)
     }
     else
     {
-        return 1;
+        if (dbus_message_iter_init(reply, &iter))
+        {
+            if (dbus_message_iter_get_arg_type(&iter) == DBUS_TYPE_VARIANT)
+            {
+                dbus_message_iter_recurse(&iter, &variant_iter);
+                if (dbus_message_iter_get_arg_type(&variant_iter) == DBUS_TYPE_BOOLEAN)
+                {
+                    dbus_message_iter_get_basic(&variant_iter, &powered);
+                }
+            }
+        }
+
+        dbus_message_unref(reply);
+        return powered;
     }
 }
 
@@ -124,7 +137,8 @@ void main(void)
     Manager->adapter_path = strdup("/org/bluez/hci0");
 
     Manager = bluez_init();
-
+    printf("Adapter path: %s\n", Manager->adapter_path);
+    printf("Connection valid: %s\n", Manager->connection ? "YES" : "NO");
     if (bluez_adapter_powered(Manager))
     {
         printf("Powered ON----->>>");
