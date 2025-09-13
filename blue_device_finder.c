@@ -42,7 +42,7 @@ BluetoothManager* bluez_init()
 
 bool bluez_adapter_powered(BluetoothManager *Manager)
 {
-    DBusMessage msg;
+    DBusMessage *msg;
     dbus_bool_t powered = TRUE;
     char *property = "Powered";
 
