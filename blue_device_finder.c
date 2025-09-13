@@ -99,6 +99,8 @@ bool bluez_adapter_powered(BluetoothManager *Manager)
     }
     else
     {
+        DBusMessageIter iter, variant_iter;
+
         if (dbus_message_iter_init(reply, &iter))
         {
             if (dbus_message_iter_get_arg_type(&iter) == DBUS_TYPE_VARIANT)
