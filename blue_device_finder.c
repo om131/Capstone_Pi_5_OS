@@ -1,3 +1,6 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <dbus/dbus.h>
 
 typedef struct
@@ -5,6 +8,14 @@ typedef struct
     DBusConnection *connection;
     char *adapter_path;
 } BluetoothManager;
+
+static void check_dbus_error(DBusError *error, const char *operation) {
+    if (dbus_error_is_set(error)) {
+        fprintf(stderr, "D-Bus error in %s: %s\n", operation, error->message);
+        dbus_error_free(error);
+        exit(1);
+    }
+}
 
 BluetoothManager bluez_init()
 {
@@ -72,17 +83,13 @@ void bluez_adapter_powered(BluetoothManager *Manager)
         dbus_message_iter_append_basic(&iter, DBUS_TYPE_STRING, &interface);
         dbus_message_iter_append_basic(&iter, DBUS_TYPE_STRING, &property);
 
-        char type_str[2] = {type, '\0'};
+        char type_str[2] = {DBUS_TYPE_BOOLEAN, '\0'};
         dbus_message_iter_open_container(&iter, DBUS_TYPE_VARIANT, type_str, &variant_iter);
-        dbus_message_iter_append_basic(&variant_iter, type, value);
+        dbus_message_iter_append_basic(&variant_iter, DBUS_TYPE_BOOLEAN, &powered);
         dbus_message_iter_close_container(&iter, &variant_iter);
+        reply = dbus_connection_send_with_reply_and_block(Manager->connection, msg, -1, &error);
+        check_dbus_error(&error, "setting property");
 
-        set_property(manager->connection,
-                     manager->adapter_path,
-                     "org.bluez.Adapter1",
-                     "Powered",
-                     DBUS_TYPE_BOOLEAN,
-                     &powered);
     }
     else
     {
@@ -115,5 +122,5 @@ void Main(void)
     bluez_adapter_powered(Manager);
 
     // Init the Bluetooth lib for scanning
-    bluez_enable_discoverable();
+    //bluez_enable_discoverable();
 }
