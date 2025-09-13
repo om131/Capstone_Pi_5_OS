@@ -70,32 +70,8 @@ bool bluez_adapter_powered(BluetoothManager *Manager)
     dbus_message_unref(msg);
 
     if (!reply)
-    { // if Not powered ON then manually power ON.
-        printf("Powering on Bluetooth adapter...\n");
-
-        msg = dbus_message_new_method_call(
-            "org.bluez",                       // destination
-            "/org/bluez/hci0",                 // object path
-            "org.freedesktop.DBus.Properties", // interface
-            "Set"                              // method
-        );
-        if (!msg)
-        {
-            fprintf(stderr, "Failed to create message\n");
-            return 0;
-        }
-
-        DBusMessageIter iter, variant_iter;
-        dbus_message_iter_init_append(msg, &iter);
-        dbus_message_iter_append_basic(&iter, DBUS_TYPE_STRING, &interface);
-        dbus_message_iter_append_basic(&iter, DBUS_TYPE_STRING, &property);
-
-        char type_str[2] = {DBUS_TYPE_BOOLEAN, '\0'};
-        dbus_message_iter_open_container(&iter, DBUS_TYPE_VARIANT, type_str, &variant_iter);
-        dbus_message_iter_append_basic(&variant_iter, DBUS_TYPE_BOOLEAN, &powered);
-        dbus_message_iter_close_container(&iter, &variant_iter);
-        reply = dbus_connection_send_with_reply_and_block(Manager->connection, msg, -1, &error);
-        check_dbus_error(&error, "setting property");
+    {
+        return 0;
     }
     else
     {
@@ -116,6 +92,35 @@ bool bluez_adapter_powered(BluetoothManager *Manager)
         dbus_message_unref(reply);
         printf("Powered Vard-> %d/n", powered);
 
+        if (powered == false)
+        {
+            // if Not powered ON then manually power ON.
+            printf("Powering on Bluetooth adapter...\n");
+
+            msg = dbus_message_new_method_call(
+                "org.bluez",                       // destination
+                "/org/bluez/hci0",                 // object path
+                "org.freedesktop.DBus.Properties", // interface
+                "Set"                              // method
+            );
+            if (!msg)
+            {
+                fprintf(stderr, "Failed to create message\n");
+                return 0;
+            }
+
+            DBusMessageIter iter, variant_iter;
+            dbus_message_iter_init_append(msg, &iter);
+            dbus_message_iter_append_basic(&iter, DBUS_TYPE_STRING, &interface);
+            dbus_message_iter_append_basic(&iter, DBUS_TYPE_STRING, &property);
+
+            char type_str[2] = {DBUS_TYPE_BOOLEAN, '\0'};
+            dbus_message_iter_open_container(&iter, DBUS_TYPE_VARIANT, type_str, &variant_iter);
+            dbus_message_iter_append_basic(&variant_iter, DBUS_TYPE_BOOLEAN, &powered);
+            dbus_message_iter_close_container(&iter, &variant_iter);
+            reply = dbus_connection_send_with_reply_and_block(Manager->connection, msg, -1, &error);
+            check_dbus_error(&error, "setting property");
+        }
         return powered;
     }
 }
@@ -143,8 +148,9 @@ void main(void)
     Manager = bluez_init();
     printf("Adapter path: %s\n", Manager->adapter_path);
     printf("Connection valid: %s\n", Manager->connection ? "YES" : "NO");
-    if (bluez_adapter_powered(Manager))
+    if (bluez_adapter_powered(Manager) == 1)
     {
+        bluez_adapter_powered(Manager)
         printf("Powered ON----->>>");
     }
     else
