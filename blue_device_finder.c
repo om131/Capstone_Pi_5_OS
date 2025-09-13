@@ -114,6 +114,8 @@ bool bluez_adapter_powered(BluetoothManager *Manager)
         }
 
         dbus_message_unref(reply);
+        printf("Powered Vard-> %d/n", powered);
+
         return powered;
     }
 }
