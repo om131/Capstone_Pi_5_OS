@@ -50,10 +50,15 @@ bool bluez_adapter_powered(BluetoothManager *Manager)
 
     msg = dbus_message_new_method_call(
         "org.bluez",                       // destination
-        Manager->adapter_path,             // object path
+        "/org/bluez/hci0",             // object path
         "org.freedesktop.DBus.Properties", // interface
         "Get"                              // method
     );
+    if (!msg)
+    {
+        fprintf(stderr, "Failed to create message\n");
+        return 0;
+    }
     // Add parameters: interface name and property name
     DBusMessageIter iter;
     dbus_message_iter_init_append(msg, &iter);
@@ -69,7 +74,7 @@ bool bluez_adapter_powered(BluetoothManager *Manager)
 
         msg = dbus_message_new_method_call(
             "org.bluez",                       // destination
-            Manager->adapter_path,             // object path
+            "/org/bluez/hci0",             // object path
             "org.freedesktop.DBus.Properties", // interface
             "Set"                              // method
         );
