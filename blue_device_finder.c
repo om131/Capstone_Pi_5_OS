@@ -66,6 +66,17 @@ void bluez_adapter_powered(BluetoothManager *Manager)
             fprintf(stderr, "Failed to create message\n");
             return;
         }
+
+        DBusMessageIter iter;
+        dbus_message_iter_init_append(msg, &iter);
+        dbus_message_iter_append_basic(&iter, DBUS_TYPE_STRING, &interface);
+        dbus_message_iter_append_basic(&iter, DBUS_TYPE_STRING, &property);
+
+        char type_str[2] = {type, '\0'};
+        dbus_message_iter_open_container(&iter, DBUS_TYPE_VARIANT, type_str, &variant_iter);
+        dbus_message_iter_append_basic(&variant_iter, type, value);
+        dbus_message_iter_close_container(&iter, &variant_iter);
+
         set_property(manager->connection,
                      manager->adapter_path,
                      "org.bluez.Adapter1",
