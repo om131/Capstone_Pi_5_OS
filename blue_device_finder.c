@@ -47,6 +47,7 @@ bool bluez_adapter_powered(BluetoothManager *Manager)
     dbus_bool_t powered = TRUE;
     char *property = "Powered";
     char *interface = "org.freedesktop.DBus.Properties";
+    dbus_error_init(&error);
 
     msg = dbus_message_new_method_call(
         "org.bluez",                       // destination
