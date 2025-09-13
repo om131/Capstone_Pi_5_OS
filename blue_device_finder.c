@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <dbus/dbus.h>
+#include <stdbool.h>
 
 typedef struct
 {
@@ -19,7 +20,7 @@ static void check_dbus_error(DBusError *error, const char *operation)
     }
 }
 
-BluetoothManager bluez_init()
+BluetoothManager* bluez_init()
 {
     BluetoothManager *mang = malloc(sizeof(BluetoothManager));
 
@@ -90,7 +91,7 @@ bool bluez_adapter_powered(BluetoothManager *Manager)
     }
     else
     {
-        return TRUE;
+        return 1;
     }
 }
 
@@ -119,6 +120,10 @@ void Main(void)
     if (bluez_adapter_powered(Manager))
     {
         printf("Powered ON----->>>");
+    }
+    else 
+    {
+        printf("Fialed powertred ON");
     }
 
     // Init the Bluetooth lib for scanning
