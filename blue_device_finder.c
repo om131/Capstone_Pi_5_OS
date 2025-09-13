@@ -41,7 +41,7 @@ BluetoothManager bluez_init()
     return mang;
 }
 
-void bluez_adapter_powered(BluetoothManager *Manager)
+bool bluez_adapter_powered(BluetoothManager *Manager)
 {
     DBusMessage msg;
     dbus_bool_t powered = TRUE;
@@ -97,19 +97,19 @@ void bluez_adapter_powered(BluetoothManager *Manager)
     }
 }
 
-bool bluez_enable_discoverable()
-{
-    DBusConnection connection_dbus;
-    DBusError error;
+// bool bluez_enable_discoverable()
+// {
+//     DBusConnection connection_dbus;
+//     DBusError error;
 
-    dbus_error_init(&error); // Init the Error system of Dbus
+//     dbus_error_init(&error); // Init the Error system of Dbus
 
-    // Discoverey enable
-    DBusMessage *method_call = dbus_message_new_method_call(const char *destination,
-                                                            const char *path,
-                                                            const char *interface,
-                                                            StartDiscovery);
-}
+//     // Discoverey enable
+//     DBusMessage *method_call = dbus_message_new_method_call(const char *destination,
+//                                                             const char *path,
+//                                                             const char *interface,
+//                                                             StartDiscovery);
+// }
 
 void Main(void)
 {
@@ -119,7 +119,10 @@ void Main(void)
 
     Manager = bluez_init();
 
-    bluez_adapter_powered(Manager);
+    if (bluez_adapter_powered(Manager))
+    {
+        printf("Powered ON----->>>");
+    }
 
     // Init the Bluetooth lib for scanning
     //bluez_enable_discoverable();
