@@ -20,7 +20,7 @@ static void check_dbus_error(DBusError *error, const char *operation)
     }
 }
 
-BluetoothManager* bluez_init()
+BluetoothManager *bluez_init()
 {
     BluetoothManager *mang = malloc(sizeof(BluetoothManager));
 
@@ -42,10 +42,12 @@ BluetoothManager* bluez_init()
 
 bool bluez_adapter_powered(BluetoothManager *Manager)
 {
-    DBusMessage *msg;
+    DBusMessage *msg, *reply;
+    DBusError error;
     dbus_bool_t powered = TRUE;
     char *property = "Powered";
     char *interface = "org.freedesktop.DBus.Properties";
+
     msg = dbus_message_new_method_call(
         "org.bluez",                       // destination
         Manager->adapter_path,             // object path
@@ -74,10 +76,10 @@ bool bluez_adapter_powered(BluetoothManager *Manager)
         if (!msg)
         {
             fprintf(stderr, "Failed to create message\n");
-            return;
+            return 0;
         }
 
-        DBusMessageIter iter;
+        DBusMessageIter iter, variant_iter;
         dbus_message_iter_init_append(msg, &iter);
         dbus_message_iter_append_basic(&iter, DBUS_TYPE_STRING, &interface);
         dbus_message_iter_append_basic(&iter, DBUS_TYPE_STRING, &property);
@@ -121,7 +123,7 @@ void Main(void)
     {
         printf("Powered ON----->>>");
     }
-    else 
+    else
     {
         printf("Fialed powertred ON");
     }
