@@ -111,7 +111,7 @@ bool bluez_adapter_powered(BluetoothManager *Manager)
 //                                                             StartDiscovery);
 // }
 
-void Main(void)
+void main(void)
 {
     BluetoothManager *Manager;
 
