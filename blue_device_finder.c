@@ -171,7 +171,7 @@ void main(void)
     printf("Connection valid: %s\n", Manager->connection ? "YES" : "NO");
     if (bluez_adapter_powered(Manager) == 1)
     {
-        bluez_adapter_powered(Manager)
+        bluez_adapter_powered(Manager);
             printf("Powered ON----->>>");
     }
     else
