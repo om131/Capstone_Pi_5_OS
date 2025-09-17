@@ -63,18 +63,18 @@ void set_property(BluetoothManager *Manager, char *property, void *value)
     }
 
     // Initialize the argument iterator
-    dbus_message_iter_init_append(msg, &args);
+    dbus_message_iter_init_append(msg, &iter);
 
     // Argument 1: Interface name ("org.bluez.Adapter1")
-    dbus_message_iter_append_basic(&args, DBUS_TYPE_STRING, &interface);
+    dbus_message_iter_append_basic(&iter, DBUS_TYPE_STRING, &interface);
 
     // Argument 2: Property name ("Powered")
-    dbus_message_iter_append_basic(&args, DBUS_TYPE_STRING, &property);
+    dbus_message_iter_append_basic(&iter, DBUS_TYPE_STRING, &property);
 
     // Argument 3: The new value (wrapped in a variant)
-    dbus_message_iter_open_container(&args, DBUS_TYPE_VARIANT, "b", &variant_iter);
+    dbus_message_iter_open_container(&iter, DBUS_TYPE_VARIANT, "b", &variant_iter);
     dbus_message_iter_append_basic(&variant_iter, DBUS_TYPE_BOOLEAN, value);
-    dbus_message_iter_close_container(&args, &variant_iter);
+    dbus_message_iter_close_container(&iter, &variant_iter);
 
     reply = dbus_connection_send_with_reply_and_block(Manager->connection, msg, -1, &error);
     check_dbus_error(&error, "Setting property...");
