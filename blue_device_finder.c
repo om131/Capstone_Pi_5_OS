@@ -146,19 +146,76 @@ bool bluez_adapter_powered(BluetoothManager *Manager)
     }
 }
 
-// bool bluez_enable_discoverable()
-// {
-//     DBusConnection connection_dbus;
-//     DBusError error;
+void device_handle_dbus(DBusConnection *connection,
+                        DBusMessage *message,
+                        void *user_data)
+{
+    if (dbus_message_is_signal(message, "org.bluez.Adapter1", "DeviceFound"))
+    {
+        DBusMessageIter iter;
+        const char *device_path;
 
-//     dbus_error_init(&error); // Init the Error system of Dbus
+        if (dbus_message_iter_init(message, &iter))
+        {
+            // First parameter: device object path
+            if (dbus_message_iter_get_arg_type(&iter) == DBUS_TYPE_OBJECT_PATH)
+            {
+                dbus_message_iter_get_basic(&iter, &device_path);
+                printf("Found device: %s\n", device_path);
 
-//     // Discoverey enable
-//     DBusMessage *method_call = dbus_message_new_method_call(const char *destination,
-//                                                             const char *path,
-//                                                             const char *interface,
-//                                                             StartDiscovery);
-// }
+                // Second parameter: properties dictionary
+                // (You can parse this to get device name, address, etc.)
+            }
+        }
+
+        return DBUS_HANDLER_RESULT_HANDLED;
+    }
+    return DBUS_HANDLER_RESULT_NOT_YET_HANDLED;
+}
+
+void blwuz_signal_init(BluetoothManager *Manager)
+{
+    DBusError error;
+    dbus_error_init(&error);
+
+    dbus_bus_add_match(manager->connection,
+                       "type='signal'",
+                       "interface='org.bluez.Adapter1'",
+                       "member='DeviceFound'", &error);
+
+    check_dbus_error(&error, "adding signal match");
+
+    if (!dbus_connection_add_filter(manager->connection,
+                                    device_handle_dbus,
+                                    manager, NULL))
+    {
+        fprintf(stderr, "Failed to add signal handler\n");
+        exit(1);
+    }
+}
+
+bool bluez_enable_discoverable(BluetoothManager *Manager)
+{
+    DBusMessage *msg, *reply;
+    DBusError error;
+
+    dbus_error_init(&error); // Init the Error system of Dbus
+
+    // Discoverey enable
+    msg = dbus_message_new_method_call(
+        "org.bluez",          // destination
+        "/org/bluez/hci0",    // object path
+        "org.bluez.Adapter1", // interface
+        "StartDiscovery"      // method
+    );
+
+    reply = dbus_connection_send_with_reply_and_block(Manager->connection, msg, -1, &error);
+    check_dbus_error(&error, "starting discovery");
+
+    if (reply)
+        dbus_message_unref(reply);
+    dbus_message_unref(msg);
+}
 
 void main(void)
 {
@@ -171,14 +228,14 @@ void main(void)
     printf("Connection valid: %s\n", Manager->connection ? "YES" : "NO");
     if (bluez_adapter_powered(Manager) == 1)
     {
-        bluez_adapter_powered(Manager);
-            printf("Powered ON----->>>");
+        // bluez_adapter_powered(Manager);
+        printf("Powered ON----->>>\n");
     }
     else
     {
-        printf("Fialed powertred ON");
+        printf("Fialed powertred ON\n");
     }
-
+    blwuz_signal_init(Manager);
     // Init the Bluetooth lib for scanning
-    // bluez_enable_discoverable();
+    bluez_enable_discoverable(Manager);
 }
