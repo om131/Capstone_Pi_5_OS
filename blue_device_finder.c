@@ -76,7 +76,7 @@ void set_property(BluetoothManager *Manager, char *property, void *value)
     dbus_message_iter_append_basic(&variant_iter, DBUS_TYPE_BOOLEAN, value);
     dbus_message_iter_close_container(&iter, &variant_iter);
 
-    reply = dbus_connection_send_with_reply_and_block(Manager->connection, msg, -1, &error);
+    reply = dbus_connection_send_with_reply_and_block(Manager->connection, msg, 10000, &error);
     check_dbus_error(&error, "Setting property...");
 
     if (reply)
