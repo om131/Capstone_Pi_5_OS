@@ -147,8 +147,8 @@ bool bluez_adapter_powered(BluetoothManager *Manager)
 }
 
 DBusHandlerResult device_handle_dbus(DBusConnection *connection,
-                        DBusMessage *message,
-                        void *user_data)
+                                     DBusMessage *message,
+                                     void *user_data)
 {
     if (dbus_message_is_signal(message, "org.bluez.Adapter1", "DeviceFound"))
     {
@@ -179,13 +179,12 @@ void blwuz_signal_init(BluetoothManager *Manager)
     dbus_error_init(&error);
 
     dbus_bus_add_match(Manager->connection,
-                       "type='signal'",
-                       "interface='org.bluez.Adapter1'",
-                       "member='DeviceFound'", &error);
+                       "type='signal',interface='org.bluez.Adapter1',member='DeviceFound'",
+                       &error);
 
     check_dbus_error(&error, "adding signal match");
 
-    if (!dbus_connection_add_filter(manager->connection,
+    if (!dbus_connection_add_filter(Manager->connection,
                                     device_handle_dbus,
                                     manager, NULL))
     {
