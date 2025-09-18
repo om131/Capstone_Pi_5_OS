@@ -186,7 +186,7 @@ void blwuz_signal_init(BluetoothManager *Manager)
 
     if (!dbus_connection_add_filter(Manager->connection,
                                     device_handle_dbus,
-                                    manager, NULL))
+                                    Manager, NULL))
     {
         fprintf(stderr, "Failed to add signal handler\n");
         exit(1);
