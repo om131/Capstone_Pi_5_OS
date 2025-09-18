@@ -146,7 +146,7 @@ bool bluez_adapter_powered(BluetoothManager *Manager)
     }
 }
 
-void device_handle_dbus(DBusConnection *connection,
+DBusHandlerResult device_handle_dbus(DBusConnection *connection,
                         DBusMessage *message,
                         void *user_data)
 {
@@ -178,7 +178,7 @@ void blwuz_signal_init(BluetoothManager *Manager)
     DBusError error;
     dbus_error_init(&error);
 
-    dbus_bus_add_match(manager->connection,
+    dbus_bus_add_match(Manager->connection,
                        "type='signal'",
                        "interface='org.bluez.Adapter1'",
                        "member='DeviceFound'", &error);
@@ -250,7 +250,7 @@ int main(void)
     // Init the Bluetooth lib for scanning
     bluez_enable_discoverable(Manager);
 
-    bluetooth_run_event_loop(manager);
+    bluetooth_run_event_loop(Manager);
 
     return 0;
 }
