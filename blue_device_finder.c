@@ -217,7 +217,18 @@ bool bluez_enable_discoverable(BluetoothManager *Manager)
     dbus_message_unref(msg);
 }
 
-void main(void)
+void bluetooth_run_event_loop(BluetoothManager *manager)
+{
+    printf("Starting event loop (press Ctrl+C to exit)...\n");
+
+    while (dbus_connection_read_write_dispatch(manager->connection, -1))
+    {
+        // Event loop - handles incoming signals and method replies
+        // This will call our registered signal handlers
+    }
+}
+
+int main(void)
 {
     BluetoothManager *Manager;
 
@@ -238,4 +249,8 @@ void main(void)
     blwuz_signal_init(Manager);
     // Init the Bluetooth lib for scanning
     bluez_enable_discoverable(Manager);
+
+    bluetooth_run_event_loop(manager);
+
+    return 0;
 }
