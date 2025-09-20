@@ -194,11 +194,11 @@ void blwuz_signal_init(BluetoothManager *Manager)
                                     Manager, NULL))
     {
         fprintf(stderr, "Failed to add signal handler\n");
-        dbus_error_free(error);
+        dbus_error_free(&error);
 
         exit(1);
     }
-    dbus_error_free(error);
+    dbus_error_free(&error);
 }
 
 bool bluez_enable_discoverable(BluetoothManager *Manager)
