@@ -40,7 +40,7 @@ BluetoothManager *bluez_init()
     return mang;
 }
 
-int set_property(BluetoothManager *Manager, char *property, void *value)
+int set_property(BluetoothManager *Manager, char *property, dbus_bool_t *value)
 {
     DBusMessage *msg, *reply;
     DBusMessageIter iter, variant_iter;
