@@ -76,14 +76,19 @@ void set_property(BluetoothManager *Manager, char *property, void *value)
     dbus_message_iter_append_basic(&variant_iter, DBUS_TYPE_BOOLEAN, value);
     dbus_message_iter_close_container(&iter, &variant_iter);
 
-    reply = dbus_connection_send_with_reply_and_block(Manager->connection, msg, 10000, &error);
+    reply = dbus_connection_send_with_reply_and_block(Manager->connection, msg, -1, &error);
     check_dbus_error(&error, "Setting property...");
 
-    if (reply)
+    if (dbus_error_is_set(&error))
     {
-        printf("No message recied after setting proper");
-        dbus_message_unref(reply);
+        dbus_error_free(&error);
+        dbus_message_unref(msg);
+        return -1;
     }
+
+    dbus_message_unref(reply);
+    dbus_message_unref(msg);
+    return 1;
 }
 
 bool bluez_adapter_powered(BluetoothManager *Manager)
@@ -230,13 +235,19 @@ void bluetooth_run_event_loop(BluetoothManager *manager)
 int main(void)
 {
     BluetoothManager *Manager;
+    int powere_is_on_off = false;
+    dbus_bool_t powered = TRUE;
 
     Manager->adapter_path = strdup("/org/bluez/hci0");
 
     Manager = bluez_init();
+
     printf("Adapter path: %s\n", Manager->adapter_path);
     printf("Connection valid: %s\n", Manager->connection ? "YES" : "NO");
-    if (bluez_adapter_powered(Manager) == 1)
+
+    powere_is_on_off = set_property(Manager, "Powered", &powered);
+
+    if (powere_is_on_off == 1)
     {
         // bluez_adapter_powered(Manager);
         printf("Powered ON----->>>\n");
@@ -245,11 +256,12 @@ int main(void)
     {
         printf("Fialed powertred ON\n");
     }
-    blwuz_signal_init(Manager);
-    // Init the Bluetooth lib for scanning
-    bluez_enable_discoverable(Manager);
+    // blwuz_signal_init(Manager);
+    // // Init the Bluetooth lib for scanning
+    // bluez_enable_discoverable(Manager);
 
-    bluetooth_run_event_loop(Manager);
+    // bluetooth_run_event_loop(Manager);
+    dbus_connection_unref(conn);
 
     return 0;
 }
