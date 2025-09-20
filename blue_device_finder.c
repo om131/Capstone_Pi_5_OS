@@ -194,8 +194,11 @@ void blwuz_signal_init(BluetoothManager *Manager)
                                     Manager, NULL))
     {
         fprintf(stderr, "Failed to add signal handler\n");
+        dbus_message_unref(error);
+
         exit(1);
     }
+    dbus_message_unref(error);
 }
 
 bool bluez_enable_discoverable(BluetoothManager *Manager)
@@ -236,7 +239,7 @@ int main(void)
 {
     BluetoothManager *Manager;
     int powere_is_on_off = false;
-    dbus_bool_t powered = TRUE;
+    // dbus_bool_t powered = TRUE;
 
     Manager = bluez_init();
 
@@ -245,9 +248,9 @@ int main(void)
     printf("Adapter path: %s\n", Manager->adapter_path);
     printf("Connection valid: %s\n", Manager->connection ? "YES" : "NO");
 
-    powere_is_on_off = set_property(Manager, "Powered", &powered);
+    // powere_is_on_off = set_property(Manager, "Powered", &powered);
 
-    if (powere_is_on_off == 1)
+    if (bluez_adapter_powered(Manager) == true)
     {
         // bluez_adapter_powered(Manager);
         printf("Powered ON----->>>\n");
@@ -256,11 +259,11 @@ int main(void)
     {
         printf("Fialed powertred ON\n");
     }
-    // blwuz_signal_init(Manager);
+    blwuz_signal_init(Manager);
     // // Init the Bluetooth lib for scanning
-    // bluez_enable_discoverable(Manager);
+    bluez_enable_discoverable(Manager);
 
-    // bluetooth_run_event_loop(Manager);
+    bluetooth_run_event_loop(Manager);
     // dbus_connection_unref(conn);
 
     return 0;
