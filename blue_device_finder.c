@@ -220,7 +220,11 @@ bool bluez_enable_discoverable(BluetoothManager *Manager)
     check_dbus_error(&error, "starting discovery");
 
     if (reply)
+    {
+        printf("Start discoverable is set\n");
+
         dbus_message_unref(reply);
+    }
     dbus_message_unref(msg);
 }
 
