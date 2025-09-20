@@ -155,7 +155,7 @@ DBusHandlerResult device_handle_dbus(DBusConnection *connection,
                                      DBusMessage *message,
                                      void *user_data)
 {
-    if (dbus_message_is_signal(message, "org.bluez.Adapter1", "DeviceFound"))
+    if (dbus_message_is_signal(message, "org.freedesktop.DBus.ObjectManager", "InterfacesAdded"))
     {
         DBusMessageIter iter;
         const char *device_path;
@@ -184,7 +184,7 @@ void blwuz_signal_init(BluetoothManager *Manager)
     dbus_error_init(&error);
 
     dbus_bus_add_match(Manager->connection,
-                       "type='signal',interface='org.bluez.Adapter1',member='DeviceFound'",
+                       "type='signal',interface='org.freedesktop.DBus.ObjectManager',member='InterfacesAdded',arg0namespace='/org/bluez/'",
                        &error);
 
     check_dbus_error(&error, "adding signal match");
