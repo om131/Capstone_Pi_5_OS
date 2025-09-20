@@ -40,7 +40,7 @@ BluetoothManager *bluez_init()
     return mang;
 }
 
-void set_property(BluetoothManager *Manager, char *property, void *value)
+int set_property(BluetoothManager *Manager, char *property, void *value)
 {
     DBusMessage *msg, *reply;
     DBusMessageIter iter, variant_iter;
@@ -261,7 +261,7 @@ int main(void)
     // bluez_enable_discoverable(Manager);
 
     // bluetooth_run_event_loop(Manager);
-    dbus_connection_unref(conn);
+    // dbus_connection_unref(conn);
 
     return 0;
 }
