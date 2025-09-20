@@ -238,9 +238,9 @@ int main(void)
     int powere_is_on_off = false;
     dbus_bool_t powered = TRUE;
 
-    Manager->adapter_path = strdup("/org/bluez/hci0");
-
     Manager = bluez_init();
+
+    Manager->adapter_path = strdup("/org/bluez/hci0");
 
     printf("Adapter path: %s\n", Manager->adapter_path);
     printf("Connection valid: %s\n", Manager->connection ? "YES" : "NO");
