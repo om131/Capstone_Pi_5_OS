@@ -184,7 +184,7 @@ void blwuz_signal_init(BluetoothManager *Manager)
     dbus_error_init(&error);
 
     dbus_bus_add_match(Manager->connection,
-                       "type='signal',interface='org.freedesktop.DBus.ObjectManager',member='InterfacesAdded',arg0namespace='/org/bluez/'",
+                       "type='signal',interface='org.freedesktop.DBus.ObjectManager',member='InterfacesAdded',arg0namespace='org.bluez'",
                        &error);
 
     check_dbus_error(&error, "adding signal match");
