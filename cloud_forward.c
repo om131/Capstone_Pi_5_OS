@@ -108,7 +108,7 @@ int main()
     while (1)
     {
         printf("\n--- Demo Reading #%d ---\n", demo_counter);
-        doubt cpu_temp = 233.0;
+        double cpu_temp = 233.0;
         // Send CPU temperature
         char *temp_json = create_sensor_json("raspberry_pi_5", "cpu_temperature", cpu_temp);
         int temp_result = send_to_firebase("sensors/temperature", temp_json);
