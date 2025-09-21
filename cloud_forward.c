@@ -96,7 +96,7 @@ char *create_sensor_json(const char *device_id, const char *sensor_type, double 
     return result;
 }
 
-0 int main()
+int main()
 {
 
     // Initialize curl globally
