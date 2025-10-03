@@ -118,7 +118,10 @@ void set_property(DBusConnection *connection,
     reply = dbus_connection_send_with_reply_and_block(connection, msg, -1, &error);
     check_dbus_error(&error, "setting property");
     
-    if (reply) dbus_message_unref(reply);
+    if (reply) 
+    {   printf("%s",reply);
+        dbus_message_unref(reply);
+    }
     dbus_message_unref(msg);
 }
 
@@ -221,8 +224,8 @@ void bluetooth_monitor_devices(BluetoothManager *manager) {
     
     // Add signal match rule
     dbus_bus_add_match(manager->connection,
-        "type='signal',"
-        "interface='org.bluez.Adapter1',"
+        "type='signal'",
+        "interface='org.bluez.Adapter1'",
         "member='DeviceFound'", &error);
     check_dbus_error(&error, "adding signal match");
     

@@ -5,6 +5,7 @@
 #include <time.h>
 #include <curl/curl.h>
 #include <json-c/json.h>
+#include <iot_bluetooth.h>
 
 // Replace with your Firebase database URL
 #define FIREBASE_URL "https://pi-cloud-provider-default-rtdb.firebaseio.com/"
@@ -96,7 +97,7 @@ char *create_sensor_json(const char *device_id, const char *sensor_type, double 
     return result;
 }
 
-int main()
+int cloud_forwader(void)
 {
 
     // Initialize curl globally

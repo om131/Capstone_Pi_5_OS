@@ -3,12 +3,17 @@
 #include <string.h>
 #include <dbus/dbus.h>
 #include <stdbool.h>
+#include <ipc_api.h>
+#include <iot_bluetooth.h>
 
 typedef struct
 {
     DBusConnection *connection;
     char *adapter_path;
 } BluetoothManager;
+
+extern char buffer[1026];
+int server_id;
 
 static void check_dbus_error(DBusError *error, const char *operation)
 {
@@ -168,6 +173,9 @@ DBusHandlerResult device_handle_dbus(DBusConnection *connection,
                 dbus_message_iter_get_basic(&iter, &device_path);
                 printf("Found device: %s\n", device_path);
 
+                /*Send data via IPC*/
+                ipc_socket_send(server_id, device_path, strlen(device_path));
+
                 // Second parameter: properties dictionary
                 // (You can parse this to get device name, address, etc.)
             }
@@ -184,7 +192,7 @@ void blwuz_signal_init(BluetoothManager *Manager)
     dbus_error_init(&error);
 
     dbus_bus_add_match(Manager->connection,
-                       "type='signal',interface='org.freedesktop.DBus.ObjectManager',member='InterfacesAdded',path='/org/bluez/'",
+                       "type='signal',interface='org.freedesktop.DBus.ObjectManager',member='InterfacesAdded',path='/org/bluez'",
                        &error);
 
     check_dbus_error(&error, "adding signal match");
@@ -239,20 +247,14 @@ void bluetooth_run_event_loop(BluetoothManager *manager)
     }
 }
 
-int main(void)
+int bluetooth_app(void)
 {
     BluetoothManager *Manager;
     int powere_is_on_off = false;
-    // dbus_bool_t powered = TRUE;
 
     Manager = bluez_init();
 
     Manager->adapter_path = strdup("/org/bluez/hci0");
-
-    printf("Adapter path: %s\n", Manager->adapter_path);
-    printf("Connection valid: %s\n", Manager->connection ? "YES" : "NO");
-
-    // powere_is_on_off = set_property(Manager, "Powered", &powered);
 
     if (bluez_adapter_powered(Manager) == true)
     {
@@ -263,9 +265,12 @@ int main(void)
     {
         printf("Fialed powertred ON\n");
     }
+
     blwuz_signal_init(Manager);
     // // Init the Bluetooth lib for scanning
     bluez_enable_discoverable(Manager);
+
+    server_id = ipc_socket_server_init(8080);
 
     bluetooth_run_event_loop(Manager);
     // dbus_connection_unref(conn);

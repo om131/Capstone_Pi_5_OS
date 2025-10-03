@@ -1,5 +1,13 @@
 {
     "files.associations": {
-        "dbus.h": "c"
+        "dbus.h": "c",
+        "compare": "c",
+        "tuple": "c",
+        "type_traits": "c",
+        "utility": "c",
+        "xmemory": "c",
+        "xtr1common": "c",
+        "xutility": "c",
+        "ipc_api.h": "c"
     }
 }
