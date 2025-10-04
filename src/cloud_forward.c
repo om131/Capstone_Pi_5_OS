@@ -104,7 +104,7 @@ int cloud_forwader(void)
     // Initialize curl globally
     curl_global_init(CURL_GLOBAL_DEFAULT);
     srand(time(NULL)); // Seed random number generator
-
+    int server_id = 0;
     int demo_counter = 1;
     char *buffer = (char)malloc(buffer_size);
     server_id = ipc_socket_server_init(8080);
