@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -Wall -O2 -I. 
-LDFLAGS = -ldbus-1 -lbluetooth -lpthread -lcurl
+LDFLAGS = `pkg-config --cflags --libs dbus-1` -lbluetooth -lcurl -ljson-c
 
 SRC = blue_device_finder.c \
       cloud_forward.c \
