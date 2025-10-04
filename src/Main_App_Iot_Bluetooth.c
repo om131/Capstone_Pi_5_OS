@@ -1,4 +1,3 @@
-#include <iot_bluetooth.h>
 #define _GNU_SOURCE
 #include <pthread.h>
 #include <sched.h>
@@ -7,6 +6,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <time.h>
+#include <iot_bluetooth.h>
 
 // Pin thread to specific CPU core
 void pin_thread_to_core(int core)
