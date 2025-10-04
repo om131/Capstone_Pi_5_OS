@@ -6,7 +6,7 @@
 #include <ipc_api.h>
 #include <iot_bluetooth.h>
 
-int server_id =0;
+// int server_id =0;
 
 typedef struct
 {
@@ -175,7 +175,7 @@ DBusHandlerResult device_handle_dbus(DBusConnection *connection,
                 printf("Found device: %s\n", device_path);
 
                 /*Send data via IPC*/
-                ipc_socket_send(server_id, device_path, strlen(device_path));
+                // ipc_socket_send(server_id, device_path, strlen(device_path));
 
                 // Second parameter: properties dictionary
                 // (You can parse this to get device name, address, etc.)
@@ -271,7 +271,7 @@ int bluetooth_app(void)
     // // Init the Bluetooth lib for scanning
     bluez_enable_discoverable(Manager);
 
-    server_id = ipc_socket_server_init(8080);
+    // server_id = ipc_socket_server_init(8080);
 
     bluetooth_run_event_loop(Manager);
     // dbus_connection_unref(conn);
