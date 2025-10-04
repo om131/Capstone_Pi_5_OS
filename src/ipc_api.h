@@ -5,7 +5,7 @@
 // Function declarations (prototypes)
 int ipc_socket_server_init(const int port);
 
-int ipc_socket_client_init(const int port)
+int ipc_socket_client_init(const int port);
 
 int ipc_socket_send(int socket_name, char *buffer_send, int buffer_size);
 
