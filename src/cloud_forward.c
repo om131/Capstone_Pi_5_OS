@@ -107,11 +107,11 @@ int cloud_forwader(void)
     int server_id = 0;
     int demo_counter = 1;
     char *buffer = (char)malloc(buffer_size);
-    server_id = ipc_socket_client_init(8080);
+   // server_id = ipc_socket_client_init(8080);
 
     while (1)
     {
-        ipc_socket_read(server_id, buffer, buffer_size);
+       // ipc_socket_read(server_id, buffer, buffer_size);
 
         printf("From Server - %s", buffer);
         printf("\n--- Demo Reading #%d ---\n", demo_counter);
