@@ -4,7 +4,7 @@
 
 // Function declarations (prototypes)
 int bluetooth_app(void);
-int cloud_forwader(void)
+int cloud_forwader(void);
 
 
 #endif
