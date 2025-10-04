@@ -9,6 +9,7 @@
         "xtr1common": "c",
         "xutility": "c",
         "ipc_api.h": "c",
-        "iot_bluetooth.h": "c"
+        "iot_bluetooth.h": "c",
+        "pthread.h": "c"
     }
 }

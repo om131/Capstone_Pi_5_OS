@@ -6,7 +6,7 @@
 #include <ipc_api.h>
 #include <iot_bluetooth.h>
 
-int server_id =0;
+int server_id = 0;
 
 typedef struct
 {

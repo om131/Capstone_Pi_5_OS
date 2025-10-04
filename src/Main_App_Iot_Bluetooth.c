@@ -51,14 +51,14 @@ int main()
     printf("Number of CPUs: %d\n", sysconf(_SC_NPROCESSORS_ONLN));
 
     // Create threads
-    pthread_create(&cloud_thread, NULL, cloud_forwarder_thread, NULL);
     pthread_create(&ble_thread, NULL, ble_scanner_thread, NULL);
+    pthread_create(&cloud_thread, NULL, cloud_forwarder_thread, NULL);
 
     // pthread_create(&processor_thread, NULL, data_processor_thread, NULL);
 
     // Wait for completion
-    pthread_join(cloud_thread, NULL);
     pthread_join(ble_thread, NULL);
+    pthread_join(cloud_thread, NULL);
 
     // pthread_join(processor_thread, NULL);
 
