@@ -12,7 +12,6 @@ typedef struct
     char *adapter_path;
 } BluetoothManager;
 
-extern char buffer[1026];
 int server_id;
 
 static void check_dbus_error(DBusError *error, const char *operation)
