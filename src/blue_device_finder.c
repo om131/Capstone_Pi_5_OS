@@ -6,13 +6,15 @@
 #include <ipc_api.h>
 #include <iot_bluetooth.h>
 
+int server_id =0;
+
 typedef struct
 {
     DBusConnection *connection;
     char *adapter_path;
 } BluetoothManager;
 
-int server_id;
+
 
 static void check_dbus_error(DBusError *error, const char *operation)
 {
