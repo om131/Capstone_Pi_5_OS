@@ -25,6 +25,15 @@ void pin_thread_to_core(int core)
            core, sched_getcpu());
 }
 
+void *cloud_forwarder_thread(void *arg)
+{
+    pin_thread_to_core(1);  // Pin to CPU 0
+    
+    printf("cloud forwareder started\n");
+
+    cloud_forwader();
+}
+
 void *ble_scanner_thread(void *arg)
 {
     pin_thread_to_core(0);  // Pin to CPU 0
@@ -43,12 +52,12 @@ int main()
 
     // Create threads
     pthread_create(&ble_thread, NULL, ble_scanner_thread, NULL);
-    // pthread_create(&cloud_thread, NULL, cloud_forwarder_thread, NULL);
+    pthread_create(&cloud_thread, NULL, cloud_forwarder_thread, NULL);
     // pthread_create(&processor_thread, NULL, data_processor_thread, NULL);
 
     // Wait for completion
     pthread_join(ble_thread, NULL);
-    // pthread_join(cloud_thread, NULL);
+    pthread_join(cloud_thread, NULL);
     // pthread_join(processor_thread, NULL);
 
     printf("All threads completed\n");

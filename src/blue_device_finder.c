@@ -14,8 +14,6 @@ typedef struct
     char *adapter_path;
 } BluetoothManager;
 
-
-
 static void check_dbus_error(DBusError *error, const char *operation)
 {
     if (dbus_error_is_set(error))
@@ -240,9 +238,12 @@ bool bluez_enable_discoverable(BluetoothManager *Manager)
 void bluetooth_run_event_loop(BluetoothManager *manager)
 {
     printf("Starting event loop (press Ctrl+C to exit)...\n");
-
+    char *data = "Hello From Bluetooth\n";
     while (dbus_connection_read_write_dispatch(manager->connection, -1))
     {
+        /*Send data via IPC*/
+
+        ipc_socket_send(server_id, data, strlen(data));
         // Event loop - handles incoming signals and method replies
         // This will call our registered signal handlers
     }
@@ -271,7 +272,7 @@ int bluetooth_app(void)
     // // Init the Bluetooth lib for scanning
     bluez_enable_discoverable(Manager);
 
-    // server_id = ipc_socket_server_init(8080);
+    server_id = ipc_socket_server_init(8080);
 
     bluetooth_run_event_loop(Manager);
     // dbus_connection_unref(conn);

@@ -6,10 +6,11 @@
 #include <curl/curl.h>
 #include <json-c/json.h>
 #include <iot_bluetooth.h>
+#include <ipc_api.h>
 
 // Replace with your Firebase database URL
 #define FIREBASE_URL "https://pi-cloud-provider-default-rtdb.firebaseio.com/"
-
+#define buffer_size 1024
 // Response callback for curl
 size_t write_callback(void *contents, size_t size, size_t nmemb, void *userp)
 {
@@ -105,9 +106,14 @@ int cloud_forwader(void)
     srand(time(NULL)); // Seed random number generator
 
     int demo_counter = 1;
+    char *buffer = (char)malloc(buffer_size);
+    server_id = ipc_socket_server_init(8080);
 
     while (1)
     {
+        ipc_socket_read(server_id, buffer, buffer_size);
+
+        printf("From Server - %s", buffer);
         printf("\n--- Demo Reading #%d ---\n", demo_counter);
         double cpu_temp = 233.0;
         // Send CPU temperature
