@@ -93,7 +93,7 @@ int ipc_socket_send(int socket_name, char *buffer_send, int buffer_size)
     {
         /*error handling*/
     }
-    retunr 0;ś
+    return 0;
 }
 int ipc_socket_read(int socket_name, char *buffer_read, int buffer_size)
 {
@@ -103,5 +103,5 @@ int ipc_socket_read(int socket_name, char *buffer_read, int buffer_size)
     {
         /*Perform error handling*/
     }
-    retunr 0;
+    return 0;
 }
