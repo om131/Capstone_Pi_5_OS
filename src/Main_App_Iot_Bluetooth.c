@@ -8,6 +8,7 @@
 #include <time.h>
 #include <iot_bluetooth.h>
 
+#define buffer_size 1024
 // Pin thread to specific CPU core
 void pin_thread_to_core(int core)
 {
