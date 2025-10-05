@@ -29,11 +29,13 @@ void *cloud_forwarder_thread(void *arg)
 {
     pin_thread_to_core(1); // Pin to CPU 0
     int client_id = 0;
-    printf("cloud forwareder started\n");
+    char data[buffer_size] = {0};
 
     client_id = ipc_socket_client_init(8080);
 
-    cloud_forwader(client_id);
+    ipc_socket_read(cliend_id, data, buffer_size);
+    printf("From Server ----- %s -------  \n", data);
+    // cloud_forwader(client_id);
 }
 
 void *ble_scanner_thread(void *arg)
@@ -41,12 +43,15 @@ void *ble_scanner_thread(void *arg)
     pin_thread_to_core(0); // Pin to CPU 0
 
     int server_id;
+    char *data = "Hello From Bluetooth\n";
 
     printf("BLE Scanner thread started\n");
 
     server_id = ipc_socket_server_init(8080);
 
-    bluetooth_app(server_id);
+    ipc_socket_send(server_id, data, strlen(data));
+
+    // bluetooth_app(server_id);
 }
 
 int main(void)

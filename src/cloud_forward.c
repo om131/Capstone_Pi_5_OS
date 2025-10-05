@@ -100,14 +100,13 @@ char *create_sensor_json(const char *device_id, const char *sensor_type, double 
 
 int cloud_forwader(int cliend_id)
 {
-
     // Initialize curl globally
     curl_global_init(CURL_GLOBAL_DEFAULT);
     srand(time(NULL)); // Seed random number generator
     int server_id = 0;
     int demo_counter = 1;
     char data[buffer_size] = {0};
-    
+
     printf("\n--- Demo Reading #%d ---\n", 74);
 
     ipc_socket_read(cliend_id, data, buffer_size);
