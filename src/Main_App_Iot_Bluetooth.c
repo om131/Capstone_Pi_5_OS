@@ -34,7 +34,7 @@ void *cloud_forwarder_thread(void *arg)
 
     client_id = ipc_socket_client_init(8080);
 
-    ipc_socket_read(cliend_id, data, buffer_size);
+    ipc_socket_read(client_id, data, buffer_size);
     printf("From Server ----- %s -------  \n", data);
     // cloud_forwader(client_id);
 }
