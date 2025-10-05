@@ -243,7 +243,7 @@ void bluetooth_run_event_loop(BluetoothManager *manager)
     {
         /*Send data via IPC*/
 
-        ipc_socket_send(server_id, data, strlen(data));
+        ipc_socket_send(server_id_b, data, strlen(data));
         // Event loop - handles incoming signals and method replies
         // This will call our registered signal handlers
     }
