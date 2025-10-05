@@ -3,8 +3,7 @@
 #define IOT_BLUETOOTH_H
 
 // Function declarations (prototypes)
-int bluetooth_app(void);
-int cloud_forwader(void);
-
+int bluetooth_app(int server_id);
+int cloud_forwader((int cliend_id));
 
 #endif

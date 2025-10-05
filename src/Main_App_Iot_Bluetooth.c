@@ -28,22 +28,28 @@ void pin_thread_to_core(int core)
 void *cloud_forwarder_thread(void *arg)
 {
     pin_thread_to_core(1); // Pin to CPU 0
-
+    int client_id = 0;
     printf("cloud forwareder started\n");
 
-    cloud_forwader();
+    client_id = ipc_socket_client_init(8080);
+
+    cloud_forwader(client_id);
 }
 
 void *ble_scanner_thread(void *arg)
 {
     pin_thread_to_core(0); // Pin to CPU 0
 
+    int server_id;
+
     printf("BLE Scanner thread started\n");
 
-    bluetooth_app();
+    server_id = ipc_socket_server_init(8080);
+
+    bluetooth_app(server_id);
 }
 
-int main()
+int main(void)
 {
     pthread_t ble_thread, cloud_thread, processor_thread;
 
@@ -52,6 +58,9 @@ int main()
 
     // Create threads
     pthread_create(&ble_thread, NULL, ble_scanner_thread, NULL);
+
+    sleep(1);
+
     pthread_create(&cloud_thread, NULL, cloud_forwarder_thread, NULL);
 
     // pthread_create(&processor_thread, NULL, data_processor_thread, NULL);

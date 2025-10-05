@@ -98,7 +98,7 @@ char *create_sensor_json(const char *device_id, const char *sensor_type, double 
     return result;
 }
 
-int cloud_forwader(void)
+int cloud_forwader(int cliend_id)
 {
 
     // Initialize curl globally
@@ -106,14 +106,14 @@ int cloud_forwader(void)
     srand(time(NULL)); // Seed random number generator
     int server_id = 0;
     int demo_counter = 1;
-    char *buffer = (char)malloc(buffer_size);
-   // server_id = ipc_socket_client_init(8080);
+    char data[buffer_size] = { 0 };
+    
+    ipc_socket_read(cliend_id, data, buffer_size);
+    printf("From Server ----- %s -------  \n", data);
 
     while (1)
     {
-       // ipc_socket_read(server_id, buffer, buffer_size);
 
-        printf("From Server - %s", buffer);
         printf("\n--- Demo Reading #%d ---\n", demo_counter);
         double cpu_temp = 233.0;
         // Send CPU temperature

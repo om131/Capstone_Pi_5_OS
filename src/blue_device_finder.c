@@ -6,7 +6,7 @@
 #include <ipc_api.h>
 #include <iot_bluetooth.h>
 
-int server_id = 0;
+int server_id_b = 0;
 
 typedef struct
 {
@@ -249,11 +249,12 @@ void bluetooth_run_event_loop(BluetoothManager *manager)
     }
 }
 
-int bluetooth_app(void)
+int bluetooth_app(int server_id)
 {
     BluetoothManager *Manager;
     int powere_is_on_off = false;
 
+    server_id = server_id_b;
     Manager = bluez_init();
 
     Manager->adapter_path = strdup("/org/bluez/hci0");
@@ -272,7 +273,7 @@ int bluetooth_app(void)
     // // Init the Bluetooth lib for scanning
     bluez_enable_discoverable(Manager);
 
-    server_id = ipc_socket_server_init(8080);
+    // server_id = ipc_socket_server_init(8080);
 
     bluetooth_run_event_loop(Manager);
     // dbus_connection_unref(conn);
