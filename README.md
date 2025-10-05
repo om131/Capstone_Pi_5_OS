@@ -1,3 +1,4 @@
+
 🎯 Overview
 This project demonstrates advanced Linux systems programming and embedded systems concepts by building a production-ready BLE (Bluetooth Low Energy) data collection pipeline. The system efficiently scans for BLE devices, processes data with minimal latency, and reliably forwards it to cloud services (Firebase).
 Built for: Raspberry Pi 5 (ARM64)
@@ -47,3 +48,36 @@ CPU Affinity: BLE scanner pinned to CPU 0-1, Cloud forwarder to CPU 2-3
 Process Prioritization: Real-time scheduling for BLE thread
 Memory Management: Pre-allocated buffers, memory pooling
 Systemd Integration: Production-ready service configuration
+
+
+┌─────────────────────────────────────────────────────────────┐
+│                  Raspberry Pi 5 (ARM64)                     │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  ┌──────────────────┐         ┌──────────────────┐        │
+│  │  BLE Scanner     │         │ Cloud Forwarder  │        │
+│  │  (CPU 0-1)       │◄───────►│  (CPU 2-3)       │        │
+│  │                  │  IPC    │                  │        │
+│  │ • BlueZ/DBus     │         │ • cURL/Firebase  │        │
+│  │ • Device Discovery│         │ • Buffering      │        │
+│  │ • Data Parsing   │         │ • Retry Logic    │        │
+│  └──────────────────┘         └──────────────────┘        │
+│          │                             │                   │
+│          │    Unix Domain Socket       │                   │
+│          │    Shared Memory (mmap)     │                   │
+│          │                             │                   │
+│  ┌──────▼─────────────────────────────▼──────────┐        │
+│  │         Performance Monitoring                │        │
+│  │  • Latency tracking                          │        │
+│  │  • Throughput metrics                        │        │
+│  │  • CPU usage per core                        │        │
+│  └──────────────────────────────────────────────┘        │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+                            │
+                            │ HTTPS
+                            ▼
+                    ┌───────────────┐
+                    │   Firebase    │
+                    │   Cloud       │
+                    └───────────────┘
